@@ -1,0 +1,160 @@
+<!DOCTYPE html> 
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Strzelankowy Clicker</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+
+      background-image: url('https://img.freepik.com/darmowe-zdjecie/wiatr-wiosna-biale-stratosfera-czysta_1127-2384.jpg?semt=ais_hybrid&w=740');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+
+      min-height: 100vh;
+      color: #333;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 20px 0;
+
+      transform: scale(0.75);
+      transform-origin: top center;
+    }
+    #punkty {
+      font-size: 32px;
+      margin: 30px 0;
+      flex-shrink: 0;
+    }
+
+    .btn-img {
+      width: 480px; /* pistolet */
+      cursor: pointer;
+      margin-bottom: 120px; /* przerwa pod pistoletem */
+      flex-shrink: 0;
+    }
+
+    .upgrade-container {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 30px;
+      cursor: pointer;
+      width: 480px;
+      flex-shrink: 0;
+    }
+
+    .upgrade {
+      width: 100%; /* dopasowane do kontenera */
+      display: block;
+    }
+
+    #ulepszenie-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 10px 0;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      user-select: none;
+    }
+
+    .reset {
+      display: inline-block;
+      padding: 15px 30px;
+      font-size: 22px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      margin-top: 40px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .reset:hover {
+      background: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <h1>STRZELANKA CLICKER 🔫</h1>
+  <div id="punkty">Punkty: 0</div>
+
+  <!-- Pistolet -->
+  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Berretta_M9_%28no_background%29.png" class="btn-img" onclick="kliknij()" alt="Pistolet">
+
+  <!-- Pocisk z napisem nałożonym -->
+  <div class="upgrade-container" onclick="kupUlepszenie()" title="Kup ulepszenie">
+    <img src="https://pngimg.com/d/bullets_PNG35590.png" class="upgrade" alt="Pocisk">
+    <div id="ulepszenie-info">Kup ulepszenie +1 pkt— koszt 10</div>
+  </div>
+
+  <!-- RESET -->
+  <button class="reset" onclick="resetuj()">Resetuj grę</button>
+
+  <script>
+    let punkty = 0;
+    let pkt = 1;
+    let koszt = 10;
+
+    function aktualizuj() {
+      document.getElementById('punkty').innerText = 'Punkty: ' + punkty;
+      document.getElementById('ulepszenie-info').innerText =
+        `Kup ulepszenie (+${pkt} pkt/klik) — koszt ${koszt}`;
+    }
+
+    function kliknij() {
+      punkty += pkt;
+      aktualizuj();
+      zapisz();
+    }
+
+    function kupUlepszenie() {
+      if (punkty >= koszt) {
+        punkty -= koszt;
+        pkt++;
+        koszt = Math.floor(koszt * 1.5);
+        aktualizuj();
+        zapisz();
+      } else {
+        alert('Za mało punktów!');
+      }
+    }
+
+    function zapisz() {
+      localStorage.setItem('clickerSave', JSON.stringify({ punkty, pkt, koszt }));
+    }
+
+    function wczytaj() {
+      const s = JSON.parse(localStorage.getItem('clickerSave'));
+      if (s) {
+        punkty = s.punkty ?? 0;
+        pkt = s.pkt ?? 1;
+        koszt = s.koszt ?? 10;
+      }
+    }
+
+    function resetuj() {
+      if (confirm('Na pewno zresetować grę?')) {
+        punkty = 0;
+        pkt = 1;
+        koszt = 10;
+        localStorage.removeItem('clickerSave');
+        aktualizuj();
+      }
+    }
+
+    wczytaj();
+    aktualizuj();
+  </script>
+</body>
+</html>
